@@ -1,0 +1,2 @@
+C:\Users\felix\source\repos\ConsoleChess\Debug\ConsoleChess.exe
+C:\Users\felix\source\repos\ConsoleChess\Debug\ConsoleChess.pdb
