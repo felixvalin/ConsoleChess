@@ -40,5 +40,7 @@ public:
 	bool ParseMove(Move* moveToParse);
 	bool ParseCommand();
 	inline void ChangeTurn() { m_IsWhitesTurn = !m_IsWhitesTurn; }
+
+	inline void GameOver() { m_IsGameRunning = false; }
 };
 

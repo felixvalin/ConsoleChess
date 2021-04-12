@@ -7,7 +7,7 @@
 GameManager::GameManager()
 	: m_CurrentPlayer(nullptr),
 	m_IsWhitesTurn(true),
-	m_InputBuffer(new char[4])
+	m_InputBuffer(new char[5])
 {
 	if (DEBUG)
 		std::cout << typeid(this).name() << " has been created! " << std::endl;
@@ -24,8 +24,8 @@ GameManager::~GameManager()
 
 void GameManager::Init()
 {
-	m_WhitePlayer.Init(&m_Board, &m_BlackPlayer, true);
-	m_BlackPlayer.Init(&m_Board, &m_WhitePlayer, false);
+	m_WhitePlayer.Init(&m_Board, &m_BlackPlayer, this, true);
+	m_BlackPlayer.Init(&m_Board, &m_WhitePlayer, this, false);
 
 	// Save initial state
 	m_GameStateList.AddGameState(GameState(m_IsWhitesTurn, m_WhitePlayer, m_BlackPlayer));
@@ -60,6 +60,9 @@ void GameManager::Update()
 		}
 		else
 		{
+			std::cout << "Enter any text to terminate.";
+			char input;
+			std::cin >> input;
 			break;
 		}
 	} while (!ParseMove(&m_CurrentMove));

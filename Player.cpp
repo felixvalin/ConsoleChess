@@ -6,10 +6,10 @@
 #include "Piece.h"
 #include "PieceState.h"
 #include "GameState.h"
-
+#include "GameManager.h"
 
 Player::Player()
-	: m_IsWhitePlayer(false), m_Board(nullptr), m_NbOfPieces(0), m_Opponent(nullptr), m_King(nullptr)
+	: m_IsWhitePlayer(false), m_Board(nullptr), m_NbOfPieces(0), m_Opponent(nullptr), m_King(nullptr), m_Manager(nullptr)
 {
 	for (int index = 0; index < max_nb_pieces; index++)
 	{
@@ -25,13 +25,14 @@ Player::~Player()
 }
 
 
-void Player::Init(Board* board, Player* opponent, bool isWhitePlayer)
+void Player::Init(Board* board, Player* opponent, GameManager* manager, bool isWhitePlayer)
 {
 	isWhitePlayer ? m_PlayerID = "White" : m_PlayerID = "Black";
 
 	m_Board = board;
 	m_IsWhitePlayer = isWhitePlayer;
 	m_Opponent = opponent;
+	m_Manager = manager;
 
 	SetupBoard();
 }
@@ -41,41 +42,37 @@ void Player::SetupBoard()
 	int pawnRow = m_IsWhitePlayer ? 6 : 1;
 	int piecesRow = m_IsWhitePlayer ? 7 : 0;
 
-#if  defined(NO_PAWN_SETUP) && !defined(BLACK_CHECKMATE_IN_1)
-	for (unsigned int i = 0; i < Board::GetBoardWidth(); i++)
-	{
-		AddPiece(PieceType::Piece_Pawn, Point(i, pawnRow));
-	}
-#endif // #ifndef NO_PAWN_SETUP
+	// Pawns
+	//for (unsigned int i = 0; i < Board::GetBoardWidth(); i++)
+	//{
+	//	AddPiece(PieceType::Piece_Pawn, Point(i, pawnRow));
+	//}
 
-#if defined(REGULAR_SETUP) || defined(NO_PAWN_SETUP)
-	AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
-	AddPiece(PieceType::Piece_Rook, Point(7, piecesRow));
+	// Pieces
+	//AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
+	//AddPiece(PieceType::Piece_Rook, Point(7, piecesRow));
 
-	AddPiece(PieceType::Piece_Knight, Point(1, piecesRow));
-	AddPiece(PieceType::Piece_Knight, Point(6, piecesRow));
+	//AddPiece(PieceType::Piece_Knight, Point(1, piecesRow));
+	//AddPiece(PieceType::Piece_Knight, Point(6, piecesRow));
 
-	AddPiece(PieceType::Piece_Bishop, Point(2, piecesRow));
-	AddPiece(PieceType::Piece_Bishop, Point(5, piecesRow));
+	//AddPiece(PieceType::Piece_Bishop, Point(2, piecesRow));
+	//AddPiece(PieceType::Piece_Bishop, Point(5, piecesRow));
 
-	AddPiece(PieceType::Piece_Queen, Point(3, piecesRow));
-	AddPiece(PieceType::Piece_King, Point(4, piecesRow));
-#endif // #if defined(REGULAR_SETUP) || defined(NO_PAWN_SETUP)
+	//AddPiece(PieceType::Piece_Queen, Point(3, piecesRow));
+	//AddPiece(PieceType::Piece_King, Point(4, piecesRow));
 
-#ifdef PAWN_PROMOTION_SETUP
 	//Pawn promotion testing
-	if (IsWhitePlayer())
-	{
-		AddPiece(PieceType::Piece_Pawn, Point(3, 1));
-	}
+	//if (IsWhitePlayer())
+	//{
+	//	AddPiece(PieceType::Piece_Pawn, Point(3, 1));
+	//}
 
-	if (!IsWhitePlayer())
-	{
-		AddPiece(PieceType::Piece_Pawn, Point(3, 6));
-	}
-#endif // #ifdef PAWN_PROMOTION_SETUP
+	//if (!IsWhitePlayer())
+	//{
+	//	AddPiece(PieceType::Piece_Pawn, Point(3, 6));
+	//}
 
-#ifdef BLACK_CHECKMATE_IN_1
+	// Checkmate in 1
 	if (IsWhitePlayer())
 	{
 		AddPiece(PieceType::Piece_Rook, Point(0, 7));
@@ -86,9 +83,6 @@ void Player::SetupBoard()
 	{
 		AddPiece(PieceType::Piece_King, Point(0, 0));
 	}
-
-#endif // BLACK_CHECKMATE_IN_1
-
 }
 
 void Player::PreTurnSetup()
@@ -256,27 +250,30 @@ bool Player::IsKingCheckMated()
 	for (int index = 0; index < max_nb_pieces; index++)
 	{
 		Piece* piece = m_Pieces[index];
-		const Point* pieceMoves = piece->GetPossibleMoves();
 
-		for (int moveIndex = 0; moveIndex < piece->GetNbOfMoves(); moveIndex++)
-		{
-			BoardCell* moveTo = m_Board->GetBoardCell(piece->GetPosition() + pieceMoves[moveIndex]);
-			piece->Move(moveTo);
-			SetAllAttackedCells();
+		if (piece)
+        {
+            const Point* pieceMoves = piece->GetPossibleMoves();
 
-			///  THE KING MOVES TO 2,2 HERE SOMEHOW, EVEN THOUGH ITS SITTING AT 0,0
+            for (int moveIndex = 0; moveIndex < piece->GetNbOfMoves(); moveIndex++)
+            {
+                BoardCell* moveTo = m_Board->GetBoardCell(piece->GetPosition() + pieceMoves[moveIndex]);
+                piece->Move(moveTo);
+                SetAllAttackedCells();
 
-			if (!IsKingChecked())
-			{
-				m_Board->SetState(originalState);
-				return false;
-			}
+                if (!IsKingChecked())
+                {
+                    m_Board->SetState(originalState);
+                    return false;
+                }
 
-			m_Board->SetState(originalState);
-		}
+                m_Board->SetState(originalState);
+            }
+        }
 	}
 
 	std::cout << "Checkmate!" << std::endl;
+	m_Manager->GameOver();
 
 	return true;
 }

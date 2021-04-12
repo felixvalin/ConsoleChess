@@ -11,6 +11,7 @@
 #include "King.h"
 #include "Pawn.h"
 
+class GameManager;
 class Piece;
 class PieceState;
 
@@ -50,6 +51,8 @@ private:
 
 	Board* m_Board;
 
+	GameManager* m_Manager;
+
 	Player* m_Opponent;
 
 	std::string m_PlayerID;
@@ -60,7 +63,7 @@ public:
 	Player();
 	~Player();
 
-	void Init(Board* board, Player* opponent, bool isWhitePlayer);
+	void Init(Board* board, Player* opponent, GameManager* manager, bool isWhitePlayer);
 	void SetupBoard();
 
 	void PreTurnSetup();
@@ -76,6 +79,8 @@ public:
 	inline Piece** GetPieces() { return m_Pieces; };
 	void SetPieces(PieceState* states);
 	inline int GetNbOfPieces() const { return m_NbOfPieces; }
+
+	inline GameManager* GetGameManager() const { return m_Manager; }
 
 	bool IsKingChecked() const;
 	bool IsKingCheckMated();
