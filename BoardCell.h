@@ -60,7 +60,7 @@ public:
 	void Draw();
 
 	inline Point GetPosition() { return m_Position; }
-	inline Piece* GetOccupant() { return m_Occupant; }
+	inline Piece* GetOccupant() const { return m_Occupant; }
 	inline bool IsOccupied() { return m_Occupant != nullptr; }
 
 	inline Piece* const * GetAttackers() const { return m_Attackers; }
@@ -68,7 +68,7 @@ public:
 	void ResetAttackers();
 	inline bool IsUnderAttack() { return m_NbOfAttackers != 0; }
 
-	void RemovePiece();
+	void RemovePiece(bool shouldKill = true);
 
 	void AddPiece(Piece* piece);
 };

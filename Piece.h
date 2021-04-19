@@ -58,6 +58,7 @@ public:
 	bool IsLastPieceMoved() const;
 
 	inline bool IsDead() const { return m_IsDead; }
+	inline void Revive() { m_IsDead = false; }
 	inline void Kill() { m_IsDead = true; }
 
 	// This is the first part for Checks (will allow player to see if king is in check (or check mate)!

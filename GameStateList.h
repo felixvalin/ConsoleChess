@@ -1,4 +1,4 @@
-#pragma once
+	#pragma once
 #include "GameState.h"
 
 struct GameStateListItem
@@ -26,6 +26,8 @@ private:
 public:
 	GameStateList();
 	~GameStateList();
+
+	void Reinit();
 
 	void AddGameState(const GameState& state);
 	void DeleteGameState();

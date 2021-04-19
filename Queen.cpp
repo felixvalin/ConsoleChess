@@ -21,8 +21,3 @@ Queen::Queen(Point position, Player* player)
 	if (DEBUG)
 		std::cout << typeid(this).name() << " has been created! " << std::endl;
 }
-
-//void Queen::PromotePawn(Pawn* pawn)
-//{
-//
-//}

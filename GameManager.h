@@ -19,20 +19,23 @@ private:
 	Player m_BlackPlayer;
 	Player* m_CurrentPlayer;
 
-	bool m_IsWhitesTurn;
+	bool m_IsWhitesTurn = true;
 
 	char* m_InputBuffer;
 
 	Move m_CurrentMove;
 
-	GameStateList m_GameStateList;
+    GameStateList m_GameStateList;
 
-	bool m_IsGameRunning = false;
+	bool m_IsGameRunning = true;
+
+	bool m_RestartGame = false;
 
 public:
 	GameManager();
 	~GameManager();
 	void Init();
+	void Reinit();
 	bool StartGame();
 	void Update();
 	void ReDraw();

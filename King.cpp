@@ -79,7 +79,8 @@ void King::Move(BoardCell* moveFrom, BoardCell* moveTo)
 		{
 			BoardCell* queenRookCell = m_Board->GetBoardCell(GetPosition() + horizontalCellDirection*-2);
 			BoardCell* castledRookCell = m_Board->GetBoardCell(GetPosition() + horizontalCellDirection);
-			queenRookCell->GetOccupant()->Move(queenRookCell, castledRookCell);
+			if (Piece* piece = queenRookCell->GetOccupant())
+				piece->Move(queenRookCell, castledRookCell);
 		}
 	}
 

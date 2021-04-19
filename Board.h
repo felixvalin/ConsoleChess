@@ -32,6 +32,7 @@ public:
 	static bool IsOutOfBoard(Point position);
 
 	inline BoardCell* GetBoardCell(int index) { return m_Cells+index; }
+	// POS IS NOT RIGHT HERE !!!!!
 	inline BoardCell* GetBoardCell(Point pos) { return m_Cells + Board::GetIndexFromPosition(pos); }
 	inline BoardCell* GetBoardCells() { return m_Cells; }
 
@@ -41,7 +42,7 @@ public:
 	void Draw(bool shouldClearBuffer = true);
 
 	void AddPiece(Piece* piece, bool isWhitePiece);
-	Piece* GetPieceAt(Point position);
+	Piece* GetPieceAt(Point position) const;
 	void SetState(const GameState& state);
 
 	void ResetAttackedCells();

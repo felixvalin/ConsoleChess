@@ -64,6 +64,7 @@ public:
 	~Player();
 
 	void Init(Board* board, Player* opponent, GameManager* manager, bool isWhitePlayer);
+	void Reinit();
 	void SetupBoard();
 
 	void PreTurnSetup();

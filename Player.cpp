@@ -22,6 +22,11 @@ Player::Player()
 
 Player::~Player()
 {
+    for (int index = 0; index < max_nb_pieces; index++)
+    {
+        delete m_Pieces[index];
+        m_Pieces[index] = nullptr;
+    }
 }
 
 
@@ -33,6 +38,20 @@ void Player::Init(Board* board, Player* opponent, GameManager* manager, bool isW
 	m_IsWhitePlayer = isWhitePlayer;
 	m_Opponent = opponent;
 	m_Manager = manager;
+
+	SetupBoard();
+}
+
+void Player::Reinit()
+{
+	for (int index = 0; index < max_nb_pieces; index++)
+    {
+		delete m_Pieces[index];
+        m_Pieces[index] = nullptr;
+    }
+	
+	m_King = nullptr;
+	m_NbOfPieces = 0;
 
 	SetupBoard();
 }
@@ -49,17 +68,18 @@ void Player::SetupBoard()
 	//}
 
 	// Pieces
-	//AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
-	//AddPiece(PieceType::Piece_Rook, Point(7, piecesRow));
+	AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
+	AddPiece(PieceType::Piece_Rook, Point(7, piecesRow));
 
-	//AddPiece(PieceType::Piece_Knight, Point(1, piecesRow));
-	//AddPiece(PieceType::Piece_Knight, Point(6, piecesRow));
+	AddPiece(PieceType::Piece_Knight, Point(1, piecesRow));
+	AddPiece(PieceType::Piece_Knight, Point(6, piecesRow));
 
-	//AddPiece(PieceType::Piece_Bishop, Point(2, piecesRow));
-	//AddPiece(PieceType::Piece_Bishop, Point(5, piecesRow));
 
-	//AddPiece(PieceType::Piece_Queen, Point(3, piecesRow));
-	//AddPiece(PieceType::Piece_King, Point(4, piecesRow));
+	AddPiece(PieceType::Piece_Bishop, Point(2, piecesRow));
+	AddPiece(PieceType::Piece_Bishop, Point(5, piecesRow));
+
+	AddPiece(PieceType::Piece_Queen, Point(3, piecesRow));
+	AddPiece(PieceType::Piece_King, Point(4, piecesRow));
 
 	//Pawn promotion testing
 	//if (IsWhitePlayer())
@@ -73,16 +93,16 @@ void Player::SetupBoard()
 	//}
 
 	// Checkmate in 1
-	if (IsWhitePlayer())
-	{
-		AddPiece(PieceType::Piece_Rook, Point(0, 7));
-		AddPiece(PieceType::Piece_Rook, Point(2, 7));
-	}
+	//if (IsWhitePlayer())
+	//{
+	//	AddPiece(PieceType::Piece_Rook, Point(0, 7));
+	//	AddPiece(PieceType::Piece_Rook, Point(2, 7));
+	//}
 
-	if (!IsWhitePlayer())
-	{
-		AddPiece(PieceType::Piece_King, Point(0, 0));
-	}
+	//if (!IsWhitePlayer())
+	//{
+	//	AddPiece(PieceType::Piece_King, Point(0, 0));
+	//}
 }
 
 void Player::PreTurnSetup()
@@ -116,7 +136,7 @@ bool Player::MovePiece(Piece* piece, Point position)
 	if (piece->IsLegalMove(position))
 	{
 		// Save state since we simulate the move for king checks
-		GameState preMoveState(m_IsWhitePlayer, *this, *(GetOpponent()));
+		GameState preMoveState(m_IsWhitePlayer, m_Board);
 
 		BoardCell* moveFrom = m_Board->GetBoardCell(Board::GetIndexFromPosition(piece->GetPosition()));
 		BoardCell* moveTo = m_Board->GetBoardCell(Board::GetIndexFromPosition(position));
@@ -234,18 +254,20 @@ bool Player::MakeMove(Move* moveToMake)
 
 bool Player::IsKingChecked() const
 {
-	if (m_King && m_King->IsChecked())
-	{
-		std::cout << m_PlayerID << "'s King is in Check." << std::endl;
-		return true;
-	}
-	
-	return false;
+	//if (m_King && m_King->IsChecked())
+	//{
+	//	//std::cout << m_PlayerID << "'s King is in Check." << std::endl;
+	//	return true;
+	//}
+
+	//return false;
+	return m_King && m_King->IsChecked();
 }
 
 bool Player::IsKingCheckMated()
 {
-	GameState originalState(m_IsWhitePlayer, *this, *m_Opponent);
+	// After this line, THIS is changed... 
+	GameState originalState(m_IsWhitePlayer, m_Board);
 
 	for (int index = 0; index < max_nb_pieces; index++)
 	{
@@ -257,7 +279,15 @@ bool Player::IsKingCheckMated()
 
             for (int moveIndex = 0; moveIndex < piece->GetNbOfMoves(); moveIndex++)
             {
-                BoardCell* moveTo = m_Board->GetBoardCell(piece->GetPosition() + pieceMoves[moveIndex]);
+				// This was the first real bug encountered (I was treating pieceMoves like directions and not 
+				//Point newPosition = piece->GetPosition() + pieceMoves[moveIndex];
+			
+				if (Board::IsOutOfBoard(pieceMoves[moveIndex]))
+				{
+					continue;
+				}
+
+                BoardCell* moveTo = m_Board->GetBoardCell(pieceMoves[moveIndex]);
                 piece->Move(moveTo);
                 SetAllAttackedCells();
 
@@ -273,7 +303,7 @@ bool Player::IsKingCheckMated()
 	}
 
 	std::cout << "Checkmate!" << std::endl;
-	m_Manager->GameOver();
+	//m_Manager->GameOver();
 
 	return true;
 }
@@ -301,6 +331,10 @@ void Player::SetPieces(PieceState* states)
 {
 	for (int i = 0; i < max_nb_pieces; i++)
 	{
-		states[i].GetPiece()->Move(states[i]);
+		if (Piece* piece = states[i].GetPiece())
+		{
+			piece->Revive();
+			piece->Move(states[i]);
+		}
 	}
 }

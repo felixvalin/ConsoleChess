@@ -148,8 +148,8 @@ void Piece::Move(BoardCell* moveFrom, BoardCell* moveTo)
 		return;
 	}
 
-	moveFrom->RemovePiece();
-	moveTo->AddPiece(this);
+    moveFrom->RemovePiece(false);
+    moveTo->AddPiece(this);
 	m_Position = moveTo->GetPosition();
 }
 

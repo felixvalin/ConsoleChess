@@ -85,22 +85,39 @@ void Board::AddPiece(Piece* piece, bool isWhitePiece)
 	m_Cells[GetIndexFromPosition(piece->GetPosition())].AddPiece(piece);
 }
 
-Piece* Board::GetPieceAt(Point position)
+Piece* Board::GetPieceAt(Point position) const
 {
 	return m_Cells[GetIndexFromPosition(position)].GetOccupant();
 }
 
 void Board::SetState(const GameState& state)
 {
+	//PROBLEMS HERE WHEN REVIVING PIECES....
+
+	// Clear the board
 	for (int i = 0; i < s_BoardSize; i++)
 	{
-		m_Cells[i].RemovePiece();
+        m_Cells[i].RemovePiece(false);
+    }
 
+	for (int i = 0; i < s_BoardSize; i++)
+	{
+
+		// Problem here: The piece that has its move simulated (in Player::IsKingChecked()) isn't placed back to its original position.
 		if (Piece* piece = state.GetPieceOn(m_Cells[i].GetPosition()))
 		{
+			//piece->Move(&m_Cells[i]);
+			//GetBoardCell(piece->GetPosition())->RemovePiece(false);
+			//piece->Revive();
+			//piece->Move(GetBoardCell(state.GetPieceState(piece)->GetPosition()));
+			//piece->SetPosition(state.GetPieceState(piece)->GetPosition());
 			m_Cells[i].AddPiece(piece);
 			piece->SetPosition(m_Cells[i].GetPosition());
 		}
+		/*else
+		{
+			GetBoardCell(i)->RemovePiece();
+		}*/
 	}
 }
 

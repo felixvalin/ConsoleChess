@@ -22,11 +22,30 @@ GameStateList::~GameStateList()
 		{
 			tempCursor = tempCursor->previous;
 			delete tempCursor->next;
+			tempCursor->next = nullptr;
 		}
 	}
 
 	m_Head = nullptr;
 	m_Cursor = nullptr;
+}
+
+void GameStateList::Reinit()
+{
+    if (m_Head)
+    {
+        GameStateListItem* tempCursor = m_Head;
+
+        while (tempCursor->previous != nullptr)
+        {
+            tempCursor = tempCursor->previous;
+            delete tempCursor->next;
+            tempCursor->next = nullptr;
+        }
+    }
+
+    m_Head = nullptr;
+    m_Cursor = nullptr;
 }
 
 void GameStateList::AddGameState(const GameState& state)

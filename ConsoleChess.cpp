@@ -13,12 +13,19 @@ int main()
         std::cout << "First text entry!" << std::endl;
 
     GameManager Manager;
-    Manager.Init();
+    //Manager.Init();
+    bool restartGame = false;
 
-    if (Manager.StartGame())
-    {
-        return 0;
-    }
-
-    return -1;
+    do {
+        if (restartGame)
+        {
+            Manager.Reinit();
+        }
+        else
+        {
+            Manager.Init();
+        }
+    } while (restartGame = Manager.StartGame());
+    
+    return 0;
 }

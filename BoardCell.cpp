@@ -66,14 +66,18 @@ void BoardCell::ResetAttackers()
 
 void BoardCell::AddPiece(Piece* piece)
 {
-	m_Occupant = piece;
-}
-
-void BoardCell::RemovePiece()
-{
 	if (m_Occupant)
 	{
 		m_Occupant->Kill();
+	}
+
+	m_Occupant = piece;
+}
+
+void BoardCell::RemovePiece(bool shouldKill /*= true*/)
+{
+	if (m_Occupant)
+	{
 		m_Occupant = nullptr;
 	}
 }

@@ -13,7 +13,7 @@ public:
 
 	void Init(Piece* piece);
 
-	inline Piece* GetPiece() const { return m_Piece; }
+	inline Piece* GetPiece() const { return m_IsDead ? nullptr : m_Piece; }
 	inline Point GetPosition() const { return m_Position; }
 	inline bool IsDead() const { return m_IsDead; }
 };
