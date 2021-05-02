@@ -12,7 +12,7 @@ PieceState::PieceState()
 void PieceState::Init(Piece* piece)
 {
 	m_Piece = piece;
-	m_Position = piece->GetPosition();
+	//m_Position = piece->GetPosition();
 	m_IsDead = piece->IsDead();
 
 	if (DEBUG)

@@ -3,8 +3,8 @@
 
 #include "Rook.h"
 
-Rook::Rook(Point position, Player* player)
-	: Piece(position, player), HasMoved()
+Rook::Rook(Player* player)
+	: Piece(player), HasMoved()
 {
 	SetPieceID('r');
 	m_NbOfDirections = 4;

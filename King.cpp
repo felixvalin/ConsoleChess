@@ -4,8 +4,8 @@
 #include "King.h"
 #include "Rook.h"
 
-King::King(Point position, Player* player)
-	: Piece(position, player), HasMoved()
+King::King(Player* player)
+	: Piece(player), HasMoved()
 {
 	SetPieceID('k');
 	m_NbOfDirections = 8;
@@ -35,12 +35,14 @@ void King::CheckCastleMoves()
 {
 	int castleSide = 1;
 
+	Point currentPosition = m_Board->GetPiecePosition(this);
+
 	if (!GetHasMoved())
 	{
 		do
 		{
 			Point castleDirection = Point(castleSide, 0);
-			for (Point currentPos = GetPosition() + castleDirection; !Board::IsOutOfBoard(currentPos); currentPos = currentPos + castleDirection)
+			for (Point currentPos = currentPosition + castleDirection; !Board::IsOutOfBoard(currentPos); currentPos = currentPos + castleDirection)
 			{
 				BoardCell* currentCell = m_Board->GetBoardCell(currentPos);
 				if (currentCell->IsOccupied())
@@ -49,7 +51,7 @@ void King::CheckCastleMoves()
 					{
 						if (!rook->GetHasMoved())
 						{
-							m_PossibleMoves[m_PossibleMovesIndex] = GetPosition() + castleDirection*2;
+							m_PossibleMoves[m_PossibleMovesIndex] = currentPosition + castleDirection*2;
 							m_PossibleMovesIndex++;
 						}
 					}
@@ -65,20 +67,22 @@ void King::Move(BoardCell* moveFrom, BoardCell* moveTo)
 {
 	Piece::Move(moveFrom, moveTo);
 
+    Point currentPosition = m_Board->GetPiecePosition(this);
+
 	if (IsCastleMove(moveFrom, moveTo))
 	{
 		Point horizontalCellDirection = Point(1, 0);
 
-		if (GetPosition().x == 6)
+		if (currentPosition.x == 6)
 		{
-			BoardCell* kingRookCell = m_Board->GetBoardCell(GetPosition() + horizontalCellDirection);
-			BoardCell* castledRookCell = m_Board->GetBoardCell(GetPosition() + horizontalCellDirection*-1);
+			BoardCell* kingRookCell = m_Board->GetBoardCell(currentPosition + horizontalCellDirection);
+			BoardCell* castledRookCell = m_Board->GetBoardCell(currentPosition + horizontalCellDirection*-1);
 			kingRookCell->GetOccupant()->Move(kingRookCell, castledRookCell);
 		}
 		else
 		{
-			BoardCell* queenRookCell = m_Board->GetBoardCell(GetPosition() + horizontalCellDirection*-2);
-			BoardCell* castledRookCell = m_Board->GetBoardCell(GetPosition() + horizontalCellDirection);
+			BoardCell* queenRookCell = m_Board->GetBoardCell(currentPosition + horizontalCellDirection*-2);
+			BoardCell* castledRookCell = m_Board->GetBoardCell(currentPosition + horizontalCellDirection);
 			if (Piece* piece = queenRookCell->GetOccupant())
 				piece->Move(queenRookCell, castledRookCell);
 		}
@@ -96,5 +100,5 @@ bool King::IsCastleMove(BoardCell* moveFrom, BoardCell* moveTo)
 
 bool King::IsChecked() const
 {
-	return m_Board->GetBoardCell(GetPosition())->IsUnderAttack();
+	return m_Board->GetBoardCell(static_cast<const Piece*>(this))->IsUnderAttack();
 }

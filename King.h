@@ -9,7 +9,7 @@ private:
 	King();
 
 public:
-	King(Point position, Player* player);
+	King(Player* player);
 
 	void CheckPossibleMoves() override;
 

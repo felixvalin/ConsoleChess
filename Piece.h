@@ -13,7 +13,7 @@ class Piece
 {
 protected:
 	char m_PieceID;
-	Point m_Position;
+	//Point m_Position;
 
 	// Changing this from heap-allocated to stack is a really good thing since we reset it
 	// for every piece, every time we switch player turn! so 16 heap-allocations avoided per turn!
@@ -32,15 +32,16 @@ protected:
 	Piece();
 
 public:
-	Piece(Point position, Player* player);
+	//Piece(Point position, Player* player);
+    Piece(Player* player);
 	~Piece();
 
-	void Init(Board* board);
+	void Init(Board* board, Point position);
 
 	inline char GetPieceID() { return m_PieceID; }
 	void SetPieceID(char id);
-	inline Point GetPosition() const { return m_Position; }
-	inline void SetPosition(const Point& point) { m_Position = point; }
+	//inline Point GetPosition() const { return m_Position; }
+	//inline void SetPosition(const Point& point) { m_Position = point; }
 	bool IsWhitePiece() const;
 	inline const Point* GetPossibleMoves() const { return m_PossibleMoves; }
 	inline int GetNbOfMoves() const { return m_PossibleMovesIndex; }

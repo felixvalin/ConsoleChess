@@ -10,7 +10,7 @@ private:
 	Queen();
 
 public:
-	Queen(Point position, Player* player);
+	Queen(Player* player);
 
 	//void PromotePawn(Pawn* pawn) override;
 };

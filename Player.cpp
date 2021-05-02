@@ -135,23 +135,23 @@ bool Player::MovePiece(Piece* piece, Point position)
 	assert(piece);
 	if (piece->IsLegalMove(position))
 	{
-		// Save state since we simulate the move for king checks
-		GameState preMoveState(m_IsWhitePlayer, m_Board);
+		//// Save state since we simulate the move for king checks
+		//GameState preMoveState(m_IsWhitePlayer, m_Board);
 
-		BoardCell* moveFrom = m_Board->GetBoardCell(Board::GetIndexFromPosition(piece->GetPosition()));
-		BoardCell* moveTo = m_Board->GetBoardCell(Board::GetIndexFromPosition(position));
+		BoardCell* moveFrom = m_Board->GetBoardCell(piece);
+		BoardCell* moveTo = m_Board->GetBoardCell(position);
 		piece->Move(moveFrom, moveTo);
 
-		// Allows to check if king is checked
-		SetAllAttackedCells();
+		//// Allows to check if king is checked
+		//SetAllAttackedCells();
 
-		if (IsKingChecked())
-		{
-			std::cout << "Illegal Move Error: The king is in check after this move." << std::endl;
-			m_Board->SetState(preMoveState);
+		//if (IsKingChecked())
+		//{
+		//	std::cout << "Illegal Move Error: The king is in check after this move." << std::endl;
+		//	m_Board->SetState(preMoveState);
 
-			return false;
-		}
+		//	return false;
+		//}
 
 		// Check for pawn promotion
 		if (Pawn* pawn = dynamic_cast<Pawn*>(piece))
@@ -176,6 +176,7 @@ bool Player::MovePiece(Piece* piece, Point position)
 void Player::AddPiece(PieceType type, Point position, int index /*= -1*/)
 {
 	bool shouldIncNbOfPieces = false;
+    Piece* newPiece = nullptr;
 
 	// -1 is default, meaning we are setting up the first pieces. 
 	if (index == -1)
@@ -192,27 +193,28 @@ void Player::AddPiece(PieceType type, Point position, int index /*= -1*/)
 	switch (type)
 	{
 		case PieceType::Piece_Pawn:
-			m_Pieces[index] = new Pawn(position, this);
+			newPiece = new Pawn(this);
 			break;
 		case PieceType::Piece_Bishop:
-			m_Pieces[index] = new Bishop(position, this);
+			newPiece = new Bishop(this);
 			break;
 		case PieceType::Piece_Rook:
-			m_Pieces[index] = new Rook(position, this);
+			newPiece = new Rook(this);
 			break;
 		case PieceType::Piece_Knight:
-			m_Pieces[index] = new Knight(position, this);
+			newPiece = new Knight(this);
 			break;
 		case PieceType::Piece_Queen:
-			m_Pieces[index] = new Queen(position, this);
+			newPiece = new Queen(this);
 			break;
 		case PieceType::Piece_King:
-			King* newKing = new King(position, this);
-			m_Pieces[index] = newKing;
+			King* newKing = new King(this);
+			newPiece = newKing;
 			m_King = newKing;
 	}
 	
-	m_Pieces[index]->Init(m_Board);
+    m_Pieces[index] = newPiece;
+	newPiece->Init(m_Board, position);
 
 	if (shouldIncNbOfPieces)
 	{
@@ -322,7 +324,7 @@ void Player::PromotePawn(Pawn* pawn)
 	{
 		if (m_Pieces[index] == pawn)
 		{
-			AddPiece(type, pawn->GetPosition(), index);
+			AddPiece(type, m_Board->GetPiecePosition(pawn), index);
 		}
 	}
 }

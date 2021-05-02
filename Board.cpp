@@ -80,14 +80,27 @@ void Board::Draw(bool shouldClearBuffer/*= true*/)
 	std::cout << std::endl;
 }
 
-void Board::AddPiece(Piece* piece, bool isWhitePiece)
+void Board::AddPiece(Piece* piece, Point position)
 {
-	m_Cells[GetIndexFromPosition(piece->GetPosition())].AddPiece(piece);
+	m_Cells[GetIndexFromPosition(position)].AddPiece(piece);
 }
 
 Piece* Board::GetPieceAt(Point position) const
 {
 	return m_Cells[GetIndexFromPosition(position)].GetOccupant();
+}
+
+Point Board::GetPiecePosition(const Piece* piece) const
+{
+    for (int i = 0; i < s_BoardSize; i++)
+    {
+		if (m_Cells[i].GetOccupant() == piece)
+		{
+			return GetPositionFromIndex(i);
+		}
+    }
+
+	return Point();
 }
 
 void Board::SetState(const GameState& state)
@@ -112,7 +125,7 @@ void Board::SetState(const GameState& state)
 			//piece->Move(GetBoardCell(state.GetPieceState(piece)->GetPosition()));
 			//piece->SetPosition(state.GetPieceState(piece)->GetPosition());
 			m_Cells[i].AddPiece(piece);
-			piece->SetPosition(m_Cells[i].GetPosition());
+			//piece->SetPosition(m_Cells[i].GetPosition());
 		}
 		/*else
 		{

@@ -10,7 +10,7 @@ private:
 	Rook();
 
 public:
-	Rook(Point position, Player* player);
+	Rook(Player* player);
 
 	void Move(BoardCell* moveFrom, BoardCell* moveTo) override;
 };

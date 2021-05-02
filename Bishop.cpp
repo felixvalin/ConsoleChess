@@ -3,8 +3,8 @@
 
 #include "Bishop.h"
 
-Bishop::Bishop(Point position, Player* player)
-	: Piece::Piece(position, player)
+Bishop::Bishop(Player* player)
+	: Piece::Piece(player)
 {
 	SetPieceID('b');
 	m_NbOfDirections = 4;

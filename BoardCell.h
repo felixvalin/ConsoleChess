@@ -21,7 +21,7 @@ struct Point
 		x = -1;
 		y = -1;
 	}
-
+	 
 	Point operator+(Point p)
 	{
 		return { p.x + x, p.y + y };
