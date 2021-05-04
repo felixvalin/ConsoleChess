@@ -110,28 +110,13 @@ void Board::SetState(const GameState& state)
 	// Clear the board
 	for (int i = 0; i < s_BoardSize; i++)
 	{
-        m_Cells[i].RemovePiece(false);
+		m_Cells[i].SetOccupant(state.GetPiece(i));
     }
 
-	for (int i = 0; i < s_BoardSize; i++)
-	{
+	//for (int i = 0; i < s_BoardSize; i++)
+	//{
 
-		// Problem here: The piece that has its move simulated (in Player::IsKingChecked()) isn't placed back to its original position.
-		if (Piece* piece = state.GetPieceOn(m_Cells[i].GetPosition()))
-		{
-			//piece->Move(&m_Cells[i]);
-			//GetBoardCell(piece->GetPosition())->RemovePiece(false);
-			//piece->Revive();
-			//piece->Move(GetBoardCell(state.GetPieceState(piece)->GetPosition()));
-			//piece->SetPosition(state.GetPieceState(piece)->GetPosition());
-			m_Cells[i].AddPiece(piece);
-			//piece->SetPosition(m_Cells[i].GetPosition());
-		}
-		/*else
-		{
-			GetBoardCell(i)->RemovePiece();
-		}*/
-	}
+	//}
 }
 
 void Board::ResetAttackedCells()

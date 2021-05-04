@@ -102,7 +102,7 @@ void GameManager::Update()
     }
 
 	// Save GameState
-	//m_GameStateList.AddGameState(GameState(m_IsWhitesTurn, &m_Board));
+	m_GameStateList.AddGameState(GameState(m_IsWhitesTurn, &m_Board));
 
 	//if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
 	{

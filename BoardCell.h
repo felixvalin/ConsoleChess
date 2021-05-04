@@ -61,6 +61,7 @@ public:
 
 	inline Point GetPosition() { return m_Position; }
 	inline Piece* GetOccupant() const { return m_Occupant; }
+	inline void SetOccupant(Piece* piece) { m_Occupant = piece; }
 	inline bool IsOccupied() { return m_Occupant != nullptr; }
 
 	inline Piece* const * GetAttackers() const { return m_Attackers; }
