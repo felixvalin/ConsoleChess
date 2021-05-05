@@ -59,7 +59,6 @@ bool GameManager::StartGame()
 void GameManager::Update()
 {
 	m_IsWhitesTurn ? m_CurrentPlayer = &m_WhitePlayer : m_CurrentPlayer = &m_BlackPlayer;
-	// This must be where the eaten pieces are brought back on the board... 
 	m_CurrentPlayer->PreTurnSetup();
 
 	m_Board.Draw(CLEARBUFFER);
@@ -112,19 +111,11 @@ void GameManager::Update()
 void GameManager::ReDraw()
 {
 	// Set Cursor state as current state
-	//m_GameStateList.GetCursorState().UpdatePieces(m_Board);
 	m_Board.SetState(m_GameStateList.GetCursorState());
 	// Draw new state
 	m_Board.Draw(CLEARBUFFER);
 
-	//if (!m_GameStateList.IsCursorAtHead())
-	//{
-		//std::cout << std::endl;
-		//std::cout << "/l : return to latest state." << std::endl;
-	//}
-
 	// Reset to head state
-	//m_GameStateList.GetHeadState().UpdatePieces(m_Board);
     m_Board.SetState(m_GameStateList.GetHeadState());
 
 }

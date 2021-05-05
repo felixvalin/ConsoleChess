@@ -256,27 +256,19 @@ bool Player::MakeMove(Move* moveToMake)
 
 bool Player::IsKingChecked() const
 {
-	//if (m_King && m_King->IsChecked())
-	//{
-	//	//std::cout << m_PlayerID << "'s King is in Check." << std::endl;
-	//	return true;
-	//}
-
-	//return false;
 	return m_King && m_King->IsChecked();
 }
 
 bool Player::IsKingCheckMated()
 {
+	// THIS was a big issue (newly added). The attacked cells were not for the right player. 
 	SetAllAttackedCells();
 
 	if (!IsKingChecked())
 	{
 		return false;
 	}
-	// The fools checkmate doesnt work  :/
 
-	// After this line, THIS is changed... 
 	GameState originalState(m_IsWhitePlayer, m_Board);
 
 	for (int index = 0; index < max_nb_pieces; index++)

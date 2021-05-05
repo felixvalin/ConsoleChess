@@ -16,24 +16,6 @@ Piece::Piece()
 {
 }
 
-//Piece::Piece(Point position, Player* player)
-//	: m_PieceID('d'),
-//	m_Board(nullptr),
-//	m_Directions(nullptr),
-//	m_NbOfDirections(0),
-//	m_Player(player),
-//	m_PossibleMovesIndex(0)
-//	//m_Position(position),
-//{
-//	if (player->IsWhitePlayer())
-//	{
-//		m_PieceID = toupper(m_PieceID);
-//	}
-//
-//	if (DEBUG)
-//		std::cout << typeid(this).name() << " has been created! " << std::endl;
-//}
-
 Piece::Piece(Player* player)
     : m_PieceID('d'),
     m_Board(nullptr),
@@ -167,7 +149,6 @@ void Piece::Move(BoardCell* moveFrom, BoardCell* moveTo)
 
     moveFrom->RemovePiece(false);
     moveTo->AddPiece(this);
-	//m_Position = moveTo->GetPosition();
 }
 
 bool Piece::IsLastPieceMoved() const
