@@ -100,5 +100,8 @@ bool King::IsCastleMove(BoardCell* moveFrom, BoardCell* moveTo)
 
 bool King::IsChecked() const
 {
-	return m_Board->GetBoardCell(static_cast<const Piece*>(this))->IsUnderAttack();
+	const Piece* piece = static_cast<const Piece*>(this);
+	BoardCell* cell = m_Board->GetBoardCell(piece);
+	bool isUnderAttack = cell->IsUnderAttack();
+	return isUnderAttack;
 }

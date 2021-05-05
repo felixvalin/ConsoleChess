@@ -5,7 +5,7 @@
 #include "Board.h"
 #include "Piece.h"
 
-constexpr bool debug = true;
+constexpr bool debug = false;
 
 BoardCell::BoardCell()
 	: m_Position(Point(0,0)), m_Occupant(nullptr), m_ParentBoard(nullptr)

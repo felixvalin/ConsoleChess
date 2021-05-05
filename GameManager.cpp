@@ -35,7 +35,7 @@ void GameManager::Reinit()
 	m_Board = Board();
 
 	m_WhitePlayer.Reinit();
-	m_WhitePlayer.Reinit();
+	m_BlackPlayer.Reinit();
 
 	m_GameStateList.Reinit();
 
@@ -60,12 +60,11 @@ void GameManager::Update()
 {
 	m_IsWhitesTurn ? m_CurrentPlayer = &m_WhitePlayer : m_CurrentPlayer = &m_BlackPlayer;
 	// This must be where the eaten pieces are brought back on the board... 
-	//m_CurrentPlayer->PreTurnSetup();
+	m_CurrentPlayer->PreTurnSetup();
 
 	m_Board.Draw(CLEARBUFFER);
 
-    //if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
-	if (true)
+    if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
     {
         do {
             if (!m_IsGameRunning)
@@ -104,7 +103,7 @@ void GameManager::Update()
 	// Save GameState
 	m_GameStateList.AddGameState(GameState(m_IsWhitesTurn, &m_Board));
 
-	//if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
+	if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
 	{
 		ChangeTurn();
 	}
