@@ -40,7 +40,7 @@ void Board::PrintHorizontalLine()
 	std::cout << "   ";
 	for (int i = 0; i < s_BoardWidth; i++)
 	{
-		std::cout << " ---";
+		std::cout << " ----";
 	}
 	std::cout << std::endl;
 }

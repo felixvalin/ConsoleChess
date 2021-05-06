@@ -145,6 +145,9 @@ bool Player::MovePiece(Piece* piece, Point position)
 		// Allows to check if king is checked
 		SetAllAttackedCells();
 
+		///////////////////////////////////////////
+		// Checks nb of attackers, but they all dead --> still in check
+		///////////////////////////////////////////
 		if (IsKingChecked())
 		{
 			std::cout << "Illegal Move Error: The king is in check after this move." << std::endl;

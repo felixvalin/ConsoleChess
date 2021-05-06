@@ -23,20 +23,29 @@ BoardCell::BoardCell(int index, Board* board)
 
 void BoardCell::Draw()
 {
-	if (debug)
+	if (debug && IsUnderAttack())
 	{
-		if (IsUnderAttack())
-		{
-			std::cout << "|*";
-		}
-		else
-		{
-			std::cout << "| ";
-		}
+		std::cout << "|*";
 	}
 	else
 	{
 		std::cout << "| ";
+	}
+
+	if (m_Occupant)
+    {
+        if (m_Occupant->IsWhitePiece())
+        {
+            std::cout << "W";
+        }
+        else
+        {
+            std::cout << "B";
+        }
+    }
+	else
+	{
+		std::cout << " ";
 	}
 
 	if (IsOccupied())

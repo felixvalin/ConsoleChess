@@ -39,6 +39,8 @@ public:
 	bool StartGame();
 	void Update();
 	void ReDraw();
+	void FlipACoin() const;
+	void PrintHelp() const;
 
 	bool ParseMove(Move* moveToParse);
 	bool ParseCommand();

@@ -24,10 +24,7 @@ Piece::Piece(Player* player)
     m_Player(player),
     m_PossibleMovesIndex(0)
 {
-    if (player->IsWhitePlayer())
-    {
-        m_PieceID = toupper(m_PieceID);
-    }
+	m_PieceID = toupper(m_PieceID);
 
     if (DEBUG)
         std::cout << typeid(this).name() << " has been created! " << std::endl;
@@ -56,7 +53,7 @@ void Piece::ResetPossibleMoves()
 
 void Piece::SetPieceID(char id)
 {
-	(m_Player->IsWhitePlayer()) ? m_PieceID = toupper(id) : m_PieceID = id;
+	m_PieceID = toupper(id);// : m_PieceID = id;
 }
 
 bool Piece::IsWhitePiece() const

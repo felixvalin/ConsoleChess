@@ -1,6 +1,7 @@
 #include "DEBUG.h"
 #include <iostream>
 #include <ctype.h>
+#include <cstdlib>
 
 #include "GameManager.h"
 
@@ -72,7 +73,7 @@ void GameManager::Update()
             }
 
             std::cout << std::endl;
-            std::cout << m_CurrentPlayer->GetPlayerID() << "'s move: ";
+            std::cout << m_CurrentPlayer->GetPlayerID() << " to move: ";
             std::cin >> m_InputBuffer;
             std::cout << std::endl;
         } while (!ParseMove(&m_CurrentMove));
@@ -118,6 +119,36 @@ void GameManager::ReDraw()
 	// Reset to head state
     m_Board.SetState(m_GameStateList.GetHeadState());
 
+}
+
+void GameManager::FlipACoin() const
+{
+	int coin = rand() % 2;
+
+	if (coin == 0)
+	{
+		std::cout << "Heads." << std::endl;
+	}
+	else if (coin == 1)
+	{
+		std::cout << "Tails." << std::endl;
+	}
+	else
+	{
+		std::cout << "Error." << std::endl;
+	}
+}
+
+void GameManager::PrintHelp() const
+{
+    std::cout << "/h : Prints this help document." << std::endl;
+    std::cout << "/c : Flip a coin to decide who gets White." << std::endl;
+	//std::cout << "/tp : Take back the move." << std::endl;
+    std::cout << "/p : Shows previous board state." << std::endl;
+    std::cout << "/n : Shows next board state." << std::endl;
+    std::cout << "/l : Shows the latest board state." << std::endl;
+    std::cout << "/r : Reset the game." << std::endl;
+    std::cout << "/q : Quit the game." << std::endl;
 }
 
 bool GameManager::ParseMove(Move* moveToParse)
@@ -191,6 +222,26 @@ bool GameManager::ParseCommand()
 		m_RestartGame = false;
 		break;
 	}
+    case 'c': // coin
+    {
+		FlipACoin();
+        break;
+    }
+  //  case 't': // takeback
+  //  {
+		//if (m_InputBuffer[2] == 'p')
+  //      {
+  //          m_GameStateList.DeleteGameState();
+  //          m_Board.SetState(m_GameStateList.GetHeadState());
+		//	m_Board.Draw();
+  //          break;
+  //      }
+  //  }
+    case 'h': // help
+    {
+		PrintHelp();
+		break;
+    }
     case 'r': // reset
     {
         m_RestartGame = true;
