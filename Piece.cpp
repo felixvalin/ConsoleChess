@@ -63,6 +63,16 @@ bool Piece::IsWhitePiece() const
 
 void Piece::CheckPossibleMoves()
 {
+	if (m_IsDead)
+	{
+		if (m_PossibleMovesIndex != 0)
+		{
+			ResetPossibleMoves();
+		}
+
+		return;
+	}
+
 	ResetPossibleMoves();
 	m_PossibleMovesIndex = 0;
 
