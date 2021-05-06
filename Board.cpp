@@ -75,7 +75,7 @@ void Board::Draw(bool shouldClearBuffer/*= true*/)
 	std::cout << "   ";
 	for (char col = 'a'; col <= 'h'; col++)
 	{
-		std::cout << "  " << col << " ";
+		std::cout << "  " << col << "  ";
 	}
 	std::cout << std::endl;
 }

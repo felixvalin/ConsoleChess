@@ -141,6 +141,7 @@ void GameManager::FlipACoin() const
 
 void GameManager::PrintHelp() const
 {
+	std::cout << "Move command: Start coordinate + End coordinate --> [a-h][1-8][a-h][1-8]" << std::endl;
     std::cout << "/h : Prints this help document." << std::endl;
     std::cout << "/c : Flip a coin to decide who gets White." << std::endl;
 	//std::cout << "/tp : Take back the move." << std::endl;
