@@ -105,18 +105,12 @@ Point Board::GetPiecePosition(const Piece* piece) const
 
 void Board::SetState(const GameState& state)
 {
-	//PROBLEMS HERE WHEN REVIVING PIECES....
-
-	// Clear the board
 	for (int i = 0; i < s_BoardSize; i++)
 	{
 		m_Cells[i].SetOccupant(state.GetPiece(i));
     }
 
-	//for (int i = 0; i < s_BoardSize; i++)
-	//{
-
-	//}
+	m_LastPieceMoved = state.GetLastPieceMoved();
 }
 
 void Board::ResetAttackedCells()

@@ -144,7 +144,7 @@ void GameManager::PrintHelp() const
 	std::cout << "Move command: Start coordinate + End coordinate --> [a-h][1-8][a-h][1-8]" << std::endl;
     std::cout << "/h : Prints this help document." << std::endl;
     std::cout << "/c : Flip a coin to decide who gets White." << std::endl;
-	//std::cout << "/tp : Take back the move." << std::endl;
+	std::cout << "/tp : Take back the move." << std::endl;
     std::cout << "/p : Shows previous board state." << std::endl;
     std::cout << "/n : Shows next board state." << std::endl;
     std::cout << "/l : Shows the latest board state." << std::endl;
@@ -228,16 +228,16 @@ bool GameManager::ParseCommand()
 		FlipACoin();
         break;
     }
-  //  case 't': // takeback
-  //  {
-		//if (m_InputBuffer[2] == 'p')
-  //      {
-  //          m_GameStateList.DeleteGameState();
-  //          m_Board.SetState(m_GameStateList.GetHeadState());
-		//	m_Board.Draw();
-  //          break;
-  //      }
-  //  }
+    case 't': // takeback (only opponent can take back your move)
+    {
+		if (m_InputBuffer[2] == 'b')
+        {
+            m_GameStateList.DeleteGameState();
+            m_Board.SetState(m_GameStateList.GetHeadState());
+			m_Board.Draw();
+        }
+		return true;
+    }
     case 'h': // help
     {
 		PrintHelp();

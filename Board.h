@@ -37,7 +37,7 @@ public:
 	inline BoardCell* GetBoardCell(const Piece* piece) { return m_Cells + GetIndexFromPosition(GetPiecePosition(piece)); }
 	inline BoardCell* GetBoardCells() { return m_Cells; }
 
-	inline const Piece* GetLastPieceMoved() const { return m_LastPieceMoved; }
+	inline Piece* GetLastPieceMoved() const { return m_LastPieceMoved; }
 	inline void SetLastPieceMoved(Piece* piece) { m_LastPieceMoved = piece; }
 
 	void Draw(bool shouldClearBuffer = true);

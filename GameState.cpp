@@ -23,6 +23,8 @@ GameState::GameState(bool isWhitesTurn, const Board* board)
         }
     }
 
+    m_LastPieceMoved = board->GetLastPieceMoved();
+
     if (DEBUG)
         std::cout << typeid(this).name() << " has been created! " << std::endl;
 }
