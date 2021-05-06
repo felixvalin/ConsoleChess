@@ -4,8 +4,8 @@
 
 #include <iostream>
 
-Pawn::Pawn(Point position, Player* player)
-	: Piece::Piece(position, player)
+Pawn::Pawn(Player* player)
+	: Piece::Piece(player)
 {
 	SetPieceID('p');
 	m_IsFirstMove = true;
@@ -31,6 +31,8 @@ void Pawn::CheckPossibleMoves()
 	unsigned int maxDistance;
 	m_PossibleMovesIndex = 0;
 
+	Point currentPosition = m_Board->GetPiecePosition(this);
+
 	if (m_IsFirstMove)
 	{
 		maxDistance = 2;
@@ -41,7 +43,7 @@ void Pawn::CheckPossibleMoves()
 	}
 
 	// Forward movement
-	BoardCell* forwardCell = m_Board->GetBoardCell(GetPosition() + Point(0, m_ForwardDirection));
+	BoardCell* forwardCell = m_Board->GetBoardCell(currentPosition + Point(0, m_ForwardDirection));
 
 	if (!forwardCell->IsOccupied())
 	{
@@ -51,7 +53,7 @@ void Pawn::CheckPossibleMoves()
 
 	if (m_IsFirstMove)
 	{
-		BoardCell* secondForwardCell = m_Board->GetBoardCell(GetPosition() + Point(0, 2 * m_ForwardDirection));
+		BoardCell* secondForwardCell = m_Board->GetBoardCell(currentPosition + Point(0, 2 * m_ForwardDirection));
 
 		if (!secondForwardCell->IsOccupied())
 		{
@@ -61,8 +63,8 @@ void Pawn::CheckPossibleMoves()
 	}
 
 	// Kill moves (Diagonals)
-	BoardCell* firstDiagCell = !Board::IsOutOfBoard(GetPosition() + m_Diagonals[0]) ? m_Board->GetBoardCell(GetPosition() + m_Diagonals[0]) : nullptr;
-	BoardCell* secondDiagCell = !Board::IsOutOfBoard(GetPosition() + m_Diagonals[1]) ? m_Board->GetBoardCell(GetPosition() + m_Diagonals[1]) : nullptr;
+	BoardCell* firstDiagCell = !Board::IsOutOfBoard(currentPosition + m_Diagonals[0]) ? m_Board->GetBoardCell(currentPosition + m_Diagonals[0]) : nullptr;
+	BoardCell* secondDiagCell = !Board::IsOutOfBoard(currentPosition + m_Diagonals[1]) ? m_Board->GetBoardCell(currentPosition + m_Diagonals[1]) : nullptr;
 
 	if (firstDiagCell)
 	{
@@ -77,10 +79,10 @@ void Pawn::CheckPossibleMoves()
 	}
 
 	// En passant
-	if ((IsWhitePiece() && GetPosition().y == 3) || (!IsWhitePiece() && GetPosition().y == 4))
+	if ((IsWhitePiece() && currentPosition.y == 3) || (!IsWhitePiece() && currentPosition.y == 4))
 	{
-		BoardCell* firstEnPassantCell = m_Board->GetBoardCell(GetPosition() + Point(1, 0));
-		BoardCell* secondEnPassantCell = m_Board->GetBoardCell(GetPosition() + Point(-1, 0));
+		BoardCell* firstEnPassantCell = m_Board->GetBoardCell(currentPosition + Point(1, 0));
+		BoardCell* secondEnPassantCell = m_Board->GetBoardCell(currentPosition + Point(-1, 0));
 
 		if (Pawn* pawn = dynamic_cast<Pawn*>(firstEnPassantCell->GetOccupant()))
 		{
@@ -109,7 +111,7 @@ bool Pawn::IsLegalMove(Point point)
 		return false;
 	}
 
-	if (point.x != GetPosition().x)
+	if (point.x != m_Board->GetPiecePosition(this).x)
 	{
 		BoardCell* cell = m_Board->GetBoardCell(point);
 		return cell->IsOccupied() && (cell->GetOccupant()->IsWhitePiece() != IsWhitePiece());
@@ -130,7 +132,7 @@ void Pawn::Move(BoardCell* moveFrom, BoardCell* moveTo)
 
 	moveTo->AddPiece(this);
 	moveFrom->RemovePiece();
-	m_Position = moveTo->GetPosition();
+	//m_Position = moveTo->GetPosition();
 }
 
 bool Pawn::IsEnPassantMove(BoardCell* moveFrom, BoardCell* moveTo) const
@@ -141,11 +143,13 @@ bool Pawn::IsEnPassantMove(BoardCell* moveFrom, BoardCell* moveTo) const
 
 void Pawn::SetAttackedCells()
 {
+    Point currentPosition = m_Board->GetPiecePosition(this);
+
 	for (int i = 0; i < 2; i++)
 	{
-		if (!Board::IsOutOfBoard(GetPosition() + m_Diagonals[i]))
+		if (!Board::IsOutOfBoard(currentPosition + m_Diagonals[i]))
 		{
-			m_Board->GetBoardCell(GetPosition() + m_Diagonals[i])->AddAttacker(this);
+			m_Board->GetBoardCell(currentPosition + m_Diagonals[i])->AddAttacker(this);
 		}
 	}
 }
@@ -182,4 +186,9 @@ PieceType Pawn::AskForPromotion()
 	}
 	
 	return pieceType;
+}
+
+bool Pawn::CanPromote() const
+{
+	return m_Board->GetPiecePosition(this).y == m_PromotionRow;
 }

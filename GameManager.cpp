@@ -1,6 +1,7 @@
 #include "DEBUG.h"
 #include <iostream>
 #include <ctype.h>
+#include <cstdlib>
 
 #include "GameManager.h"
 
@@ -35,7 +36,7 @@ void GameManager::Reinit()
 	m_Board = Board();
 
 	m_WhitePlayer.Reinit();
-	m_WhitePlayer.Reinit();
+	m_BlackPlayer.Reinit();
 
 	m_GameStateList.Reinit();
 
@@ -59,7 +60,6 @@ bool GameManager::StartGame()
 void GameManager::Update()
 {
 	m_IsWhitesTurn ? m_CurrentPlayer = &m_WhitePlayer : m_CurrentPlayer = &m_BlackPlayer;
-	// This must be where the eaten pieces are brought back on the board... 
 	m_CurrentPlayer->PreTurnSetup();
 
 	m_Board.Draw(CLEARBUFFER);
@@ -73,7 +73,7 @@ void GameManager::Update()
             }
 
             std::cout << std::endl;
-            std::cout << m_CurrentPlayer->GetPlayerID() << "'s move: ";
+            std::cout << m_CurrentPlayer->GetPlayerID() << " to move: ";
             std::cin >> m_InputBuffer;
             std::cout << std::endl;
         } while (!ParseMove(&m_CurrentMove));
@@ -103,7 +103,7 @@ void GameManager::Update()
 	// Save GameState
 	m_GameStateList.AddGameState(GameState(m_IsWhitesTurn, &m_Board));
 
-	//if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
+	if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
 	{
 		ChangeTurn();
 	}
@@ -112,21 +112,44 @@ void GameManager::Update()
 void GameManager::ReDraw()
 {
 	// Set Cursor state as current state
-	//m_GameStateList.GetCursorState().UpdatePieces(m_Board);
 	m_Board.SetState(m_GameStateList.GetCursorState());
 	// Draw new state
 	m_Board.Draw(CLEARBUFFER);
 
-	//if (!m_GameStateList.IsCursorAtHead())
-	//{
-		//std::cout << std::endl;
-		//std::cout << "/l : return to latest state." << std::endl;
-	//}
-
 	// Reset to head state
-	//m_GameStateList.GetHeadState().UpdatePieces(m_Board);
     m_Board.SetState(m_GameStateList.GetHeadState());
 
+}
+
+void GameManager::FlipACoin() const
+{
+	int coin = rand() % 2;
+
+	if (coin == 0)
+	{
+		std::cout << "Heads." << std::endl;
+	}
+	else if (coin == 1)
+	{
+		std::cout << "Tails." << std::endl;
+	}
+	else
+	{
+		std::cout << "Error." << std::endl;
+	}
+}
+
+void GameManager::PrintHelp() const
+{
+	std::cout << "Move command: Start coordinate + End coordinate --> [a-h][1-8][a-h][1-8]" << std::endl;
+    std::cout << "/h : Prints this help document." << std::endl;
+    std::cout << "/c : Flip a coin to decide who gets White." << std::endl;
+	//std::cout << "/tp : Take back the move." << std::endl;
+    std::cout << "/p : Shows previous board state." << std::endl;
+    std::cout << "/n : Shows next board state." << std::endl;
+    std::cout << "/l : Shows the latest board state." << std::endl;
+    std::cout << "/r : Reset the game." << std::endl;
+    std::cout << "/q : Quit the game." << std::endl;
 }
 
 bool GameManager::ParseMove(Move* moveToParse)
@@ -200,6 +223,26 @@ bool GameManager::ParseCommand()
 		m_RestartGame = false;
 		break;
 	}
+    case 'c': // coin
+    {
+		FlipACoin();
+        break;
+    }
+  //  case 't': // takeback
+  //  {
+		//if (m_InputBuffer[2] == 'p')
+  //      {
+  //          m_GameStateList.DeleteGameState();
+  //          m_Board.SetState(m_GameStateList.GetHeadState());
+		//	m_Board.Draw();
+  //          break;
+  //      }
+  //  }
+    case 'h': // help
+    {
+		PrintHelp();
+		break;
+    }
     case 'r': // reset
     {
         m_RestartGame = true;

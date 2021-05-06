@@ -40,7 +40,7 @@ void Board::PrintHorizontalLine()
 	std::cout << "   ";
 	for (int i = 0; i < s_BoardWidth; i++)
 	{
-		std::cout << " ---";
+		std::cout << " ----";
 	}
 	std::cout << std::endl;
 }
@@ -75,19 +75,32 @@ void Board::Draw(bool shouldClearBuffer/*= true*/)
 	std::cout << "   ";
 	for (char col = 'a'; col <= 'h'; col++)
 	{
-		std::cout << "  " << col << " ";
+		std::cout << "  " << col << "  ";
 	}
 	std::cout << std::endl;
 }
 
-void Board::AddPiece(Piece* piece, bool isWhitePiece)
+void Board::AddPiece(Piece* piece, Point position)
 {
-	m_Cells[GetIndexFromPosition(piece->GetPosition())].AddPiece(piece);
+	m_Cells[GetIndexFromPosition(position)].AddPiece(piece);
 }
 
 Piece* Board::GetPieceAt(Point position) const
 {
 	return m_Cells[GetIndexFromPosition(position)].GetOccupant();
+}
+
+Point Board::GetPiecePosition(const Piece* piece) const
+{
+    for (int i = 0; i < s_BoardSize; i++)
+    {
+		if (m_Cells[i].GetOccupant() == piece)
+		{
+			return GetPositionFromIndex(i);
+		}
+    }
+
+	return Point();
 }
 
 void Board::SetState(const GameState& state)
@@ -97,28 +110,13 @@ void Board::SetState(const GameState& state)
 	// Clear the board
 	for (int i = 0; i < s_BoardSize; i++)
 	{
-        m_Cells[i].RemovePiece(false);
+		m_Cells[i].SetOccupant(state.GetPiece(i));
     }
 
-	for (int i = 0; i < s_BoardSize; i++)
-	{
+	//for (int i = 0; i < s_BoardSize; i++)
+	//{
 
-		// Problem here: The piece that has its move simulated (in Player::IsKingChecked()) isn't placed back to its original position.
-		if (Piece* piece = state.GetPieceOn(m_Cells[i].GetPosition()))
-		{
-			//piece->Move(&m_Cells[i]);
-			//GetBoardCell(piece->GetPosition())->RemovePiece(false);
-			//piece->Revive();
-			//piece->Move(GetBoardCell(state.GetPieceState(piece)->GetPosition()));
-			//piece->SetPosition(state.GetPieceState(piece)->GetPosition());
-			m_Cells[i].AddPiece(piece);
-			piece->SetPosition(m_Cells[i].GetPosition());
-		}
-		/*else
-		{
-			GetBoardCell(i)->RemovePiece();
-		}*/
-	}
+	//}
 }
 
 void Board::ResetAttackedCells()

@@ -9,5 +9,5 @@ private:
 	Bishop();
 
 public:
-	Bishop(Point position, Player* player);
+	Bishop(Player* player);
 };

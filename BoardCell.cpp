@@ -5,7 +5,7 @@
 #include "Board.h"
 #include "Piece.h"
 
-constexpr bool debug = true;
+constexpr bool debug = false;
 
 BoardCell::BoardCell()
 	: m_Position(Point(0,0)), m_Occupant(nullptr), m_ParentBoard(nullptr)
@@ -23,20 +23,29 @@ BoardCell::BoardCell(int index, Board* board)
 
 void BoardCell::Draw()
 {
-	if (debug)
+	if (debug && IsUnderAttack())
 	{
-		if (IsUnderAttack())
-		{
-			std::cout << "|*";
-		}
-		else
-		{
-			std::cout << "| ";
-		}
+		std::cout << "|*";
 	}
 	else
 	{
 		std::cout << "| ";
+	}
+
+	if (m_Occupant)
+    {
+        if (m_Occupant->IsWhitePiece())
+        {
+            std::cout << "W";
+        }
+        else
+        {
+            std::cout << "B";
+        }
+    }
+	else
+	{
+		std::cout << " ";
 	}
 
 	if (IsOccupied())

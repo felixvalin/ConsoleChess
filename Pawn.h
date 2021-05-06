@@ -14,7 +14,7 @@ private:
 	int m_PromotionRow;
 
 public:
-	Pawn(Point position, Player* player);
+	Pawn(Player* player);
 	~Pawn();
 
 	// Very different rules compared to other pieces
@@ -29,6 +29,6 @@ public:
 	// Should return the promoted piece? or modify as argument?
 	//void Promote(PromotionType type, Piece* promotedPiece) const;
 	PieceType AskForPromotion();
-	inline bool CanPromote() const { return m_Position.y == m_PromotionRow; }
+	bool CanPromote() const;// { return m_Position.y == m_PromotionRow; }
 };
 

@@ -62,10 +62,10 @@ void Player::SetupBoard()
 	int piecesRow = m_IsWhitePlayer ? 7 : 0;
 
 	// Pawns
-	//for (unsigned int i = 0; i < Board::GetBoardWidth(); i++)
-	//{
-	//	AddPiece(PieceType::Piece_Pawn, Point(i, pawnRow));
-	//}
+	for (unsigned int i = 0; i < Board::GetBoardWidth(); i++)
+	{
+		AddPiece(PieceType::Piece_Pawn, Point(i, pawnRow));
+	}
 
 	// Pieces
 	AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
@@ -138,13 +138,16 @@ bool Player::MovePiece(Piece* piece, Point position)
 		// Save state since we simulate the move for king checks
 		GameState preMoveState(m_IsWhitePlayer, m_Board);
 
-		BoardCell* moveFrom = m_Board->GetBoardCell(Board::GetIndexFromPosition(piece->GetPosition()));
-		BoardCell* moveTo = m_Board->GetBoardCell(Board::GetIndexFromPosition(position));
+		BoardCell* moveFrom = m_Board->GetBoardCell(piece);
+		BoardCell* moveTo = m_Board->GetBoardCell(position);
 		piece->Move(moveFrom, moveTo);
 
 		// Allows to check if king is checked
 		SetAllAttackedCells();
 
+		///////////////////////////////////////////
+		// Checks nb of attackers, but they all dead --> still in check
+		///////////////////////////////////////////
 		if (IsKingChecked())
 		{
 			std::cout << "Illegal Move Error: The king is in check after this move." << std::endl;
@@ -176,6 +179,7 @@ bool Player::MovePiece(Piece* piece, Point position)
 void Player::AddPiece(PieceType type, Point position, int index /*= -1*/)
 {
 	bool shouldIncNbOfPieces = false;
+    Piece* newPiece = nullptr;
 
 	// -1 is default, meaning we are setting up the first pieces. 
 	if (index == -1)
@@ -192,27 +196,28 @@ void Player::AddPiece(PieceType type, Point position, int index /*= -1*/)
 	switch (type)
 	{
 		case PieceType::Piece_Pawn:
-			m_Pieces[index] = new Pawn(position, this);
+			newPiece = new Pawn(this);
 			break;
 		case PieceType::Piece_Bishop:
-			m_Pieces[index] = new Bishop(position, this);
+			newPiece = new Bishop(this);
 			break;
 		case PieceType::Piece_Rook:
-			m_Pieces[index] = new Rook(position, this);
+			newPiece = new Rook(this);
 			break;
 		case PieceType::Piece_Knight:
-			m_Pieces[index] = new Knight(position, this);
+			newPiece = new Knight(this);
 			break;
 		case PieceType::Piece_Queen:
-			m_Pieces[index] = new Queen(position, this);
+			newPiece = new Queen(this);
 			break;
 		case PieceType::Piece_King:
-			King* newKing = new King(position, this);
-			m_Pieces[index] = newKing;
+			King* newKing = new King(this);
+			newPiece = newKing;
 			m_King = newKing;
 	}
 	
-	m_Pieces[index]->Init(m_Board);
+    m_Pieces[index] = newPiece;
+	newPiece->Init(m_Board, position);
 
 	if (shouldIncNbOfPieces)
 	{
@@ -254,19 +259,19 @@ bool Player::MakeMove(Move* moveToMake)
 
 bool Player::IsKingChecked() const
 {
-	//if (m_King && m_King->IsChecked())
-	//{
-	//	//std::cout << m_PlayerID << "'s King is in Check." << std::endl;
-	//	return true;
-	//}
-
-	//return false;
 	return m_King && m_King->IsChecked();
 }
 
 bool Player::IsKingCheckMated()
 {
-	// After this line, THIS is changed... 
+	// THIS was a big issue (newly added). The attacked cells were not for the right player. 
+	SetAllAttackedCells();
+
+	if (!IsKingChecked())
+	{
+		return false;
+	}
+
 	GameState originalState(m_IsWhitePlayer, m_Board);
 
 	for (int index = 0; index < max_nb_pieces; index++)
@@ -278,11 +283,8 @@ bool Player::IsKingCheckMated()
             const Point* pieceMoves = piece->GetPossibleMoves();
 
             for (int moveIndex = 0; moveIndex < piece->GetNbOfMoves(); moveIndex++)
-            {
-				// This was the first real bug encountered (I was treating pieceMoves like directions and not 
-				//Point newPosition = piece->GetPosition() + pieceMoves[moveIndex];
-			
-				if (Board::IsOutOfBoard(pieceMoves[moveIndex]))
+            {	
+				if (Board::IsOutOfBoard(pieceMoves[moveIndex]) || !piece->IsLegalMove(pieceMoves[moveIndex]))
 				{
 					continue;
 				}
@@ -290,20 +292,30 @@ bool Player::IsKingCheckMated()
                 BoardCell* moveTo = m_Board->GetBoardCell(pieceMoves[moveIndex]);
                 piece->Move(moveTo);
                 SetAllAttackedCells();
+				if (DEBUG)
+					m_Board->Draw(CLEARBUFFER);
 
                 if (!IsKingChecked())
                 {
-                    m_Board->SetState(originalState);
+					m_Board->SetState(originalState);
+
+					if (DEBUG)
+					{
+                        m_Board->Draw(CLEARBUFFER);
+                        std::cout << "This move is legal!: " << piece->GetPieceID() << " " << moveTo->GetPosition().x << " " << moveTo->GetPosition().y << std::endl;
+					}
+
+					SetAllAttackedCells();
                     return false;
                 }
 
                 m_Board->SetState(originalState);
+                SetAllAttackedCells();
             }
         }
 	}
 
 	std::cout << "Checkmate!" << std::endl;
-	//m_Manager->GameOver();
 
 	return true;
 }
@@ -322,7 +334,7 @@ void Player::PromotePawn(Pawn* pawn)
 	{
 		if (m_Pieces[index] == pawn)
 		{
-			AddPiece(type, pawn->GetPosition(), index);
+			AddPiece(type, m_Board->GetPiecePosition(pawn), index);
 		}
 	}
 }

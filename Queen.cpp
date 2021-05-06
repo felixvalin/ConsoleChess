@@ -3,8 +3,8 @@
 
 #include "Queen.h"
 
-Queen::Queen(Point position, Player* player)
-	: Piece(position, player)
+Queen::Queen(Player* player)
+	: Piece(player)
 {
 	SetPieceID('q');
 	m_NbOfDirections = 8;

@@ -16,22 +16,18 @@ Piece::Piece()
 {
 }
 
-Piece::Piece(Point position, Player* player)
-	: m_Position(position),
-	m_PieceID('d'),
-	m_Board(nullptr),
-	m_Directions(nullptr),
-	m_NbOfDirections(0),
-	m_Player(player),
-	m_PossibleMovesIndex(0)
+Piece::Piece(Player* player)
+    : m_PieceID('d'),
+    m_Board(nullptr),
+    m_Directions(nullptr),
+    m_NbOfDirections(0),
+    m_Player(player),
+    m_PossibleMovesIndex(0)
 {
-	if (player->IsWhitePlayer())
-	{
-		m_PieceID = toupper(m_PieceID);
-	}
+	m_PieceID = toupper(m_PieceID);
 
-	if (DEBUG)
-		std::cout << typeid(this).name() << " has been created! " << std::endl;
+    if (DEBUG)
+        std::cout << typeid(this).name() << " has been created! " << std::endl;
 }
 
 Piece::~Piece()
@@ -39,10 +35,10 @@ Piece::~Piece()
 	delete[] m_Directions;
 }
 
-void Piece::Init(Board* board)
+void Piece::Init(Board* board, Point position)
 {
 	m_Board = board;
-	board->AddPiece(this, m_Player->IsWhitePlayer());
+	board->AddPiece(this, position);
 }
 
 void Piece::ResetPossibleMoves()
@@ -57,7 +53,7 @@ void Piece::ResetPossibleMoves()
 
 void Piece::SetPieceID(char id)
 {
-	(m_Player->IsWhitePlayer()) ? m_PieceID = toupper(id) : m_PieceID = id;
+	m_PieceID = toupper(id);// : m_PieceID = id;
 }
 
 bool Piece::IsWhitePiece() const
@@ -67,13 +63,23 @@ bool Piece::IsWhitePiece() const
 
 void Piece::CheckPossibleMoves()
 {
+	if (m_IsDead)
+	{
+		if (m_PossibleMovesIndex != 0)
+		{
+			ResetPossibleMoves();
+		}
+
+		return;
+	}
+
 	ResetPossibleMoves();
 	m_PossibleMovesIndex = 0;
 
 	for (int i = 0; i < m_NbOfDirections; i++)
 	{
 		bool canMoveFurther = true;
-		Point currentPosition = m_Position;
+		Point currentPosition = m_Board->GetPiecePosition(this);
 
 		while (canMoveFurther && m_PossibleMovesIndex <= max_possible_moves)
 		{
@@ -137,7 +143,7 @@ bool Piece::IsLegalMove(Point point)
 
 void Piece::Move(BoardCell* moveTo)
 {
-	Move(m_Board->GetBoardCell(this->GetPosition()), moveTo);
+	Move(m_Board->GetBoardCell(this), moveTo);
 }
 
 void Piece::Move(BoardCell* moveFrom, BoardCell* moveTo)
@@ -150,7 +156,6 @@ void Piece::Move(BoardCell* moveFrom, BoardCell* moveTo)
 
     moveFrom->RemovePiece(false);
     moveTo->AddPiece(this);
-	m_Position = moveTo->GetPosition();
 }
 
 bool Piece::IsLastPieceMoved() const
@@ -160,7 +165,7 @@ bool Piece::IsLastPieceMoved() const
 
 void Piece::Move(const PieceState& state)
 {
-	Move(m_Board->GetBoardCell(GetPosition()), m_Board->GetBoardCell(state.GetPosition()));
+	Move(m_Board->GetBoardCell(this), m_Board->GetBoardCell(state.GetPosition()));
 }
 
 void Piece::SetAttackedCells()

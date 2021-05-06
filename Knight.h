@@ -9,6 +9,6 @@ private:
 	Knight();
 
 public:
-	Knight(Point position, Player* player);
+	Knight(Player* player);
 };
 

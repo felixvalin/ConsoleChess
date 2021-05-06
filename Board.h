@@ -34,6 +34,7 @@ public:
 	inline BoardCell* GetBoardCell(int index) { return m_Cells+index; }
 	// POS IS NOT RIGHT HERE !!!!!
 	inline BoardCell* GetBoardCell(Point pos) { return m_Cells + Board::GetIndexFromPosition(pos); }
+	inline BoardCell* GetBoardCell(const Piece* piece) { return m_Cells + GetIndexFromPosition(GetPiecePosition(piece)); }
 	inline BoardCell* GetBoardCells() { return m_Cells; }
 
 	inline const Piece* GetLastPieceMoved() const { return m_LastPieceMoved; }
@@ -41,8 +42,9 @@ public:
 
 	void Draw(bool shouldClearBuffer = true);
 
-	void AddPiece(Piece* piece, bool isWhitePiece);
+	void AddPiece(Piece* piece, Point position);
 	Piece* GetPieceAt(Point position) const;
+	Point GetPiecePosition(const Piece* piece) const;
 	void SetState(const GameState& state);
 
 	void ResetAttackedCells();

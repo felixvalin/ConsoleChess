@@ -3,7 +3,7 @@
 *.pdb*
 *.log*
 *.idb*
-*.exe
+*.tlog
 !*.h
 !*.cpp
 !*.sln

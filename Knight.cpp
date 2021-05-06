@@ -3,8 +3,8 @@
 
 #include "Knight.h"
 
-Knight::Knight(Point position, Player* player)
-	: Piece::Piece(position, player)
+Knight::Knight(Player* player)
+	: Piece::Piece(player)
 {
 	SetPieceID('n');
 	m_NbOfDirections = 8;
