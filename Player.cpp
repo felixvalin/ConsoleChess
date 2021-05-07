@@ -136,7 +136,7 @@ bool Player::MovePiece(Piece* piece, Point position)
 	if (piece->IsLegalMove(position))
 	{
 		// Save state since we simulate the move for king checks
-		GameState preMoveState(m_IsWhitePlayer, m_Board);
+		GameState preMoveState(m_Board);
 
 		BoardCell* moveFrom = m_Board->GetBoardCell(piece);
 		BoardCell* moveTo = m_Board->GetBoardCell(position);
@@ -272,13 +272,11 @@ bool Player::IsKingCheckMated()
 		return false;
 	}
 
-	GameState originalState(m_IsWhitePlayer, m_Board);
+	GameState originalState(m_Board);
 
 	for (int index = 0; index < max_nb_pieces; index++)
 	{
-		Piece* piece = m_Pieces[index];
-
-		if (piece)
+		if (Piece* piece = m_Pieces[index])
         {
             const Point* pieceMoves = piece->GetPossibleMoves();
 

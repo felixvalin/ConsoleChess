@@ -28,7 +28,7 @@ void GameManager::Init()
 	m_BlackPlayer.Init(&m_Board, &m_WhitePlayer, this, false);
 
 	// Save initial state
-	m_GameStateList.AddGameState(GameState(m_IsWhitesTurn, &m_Board));
+	m_GameStateList.AddGameState(GameState(&m_Board));
 }
 
 void GameManager::Reinit()
@@ -44,7 +44,7 @@ void GameManager::Reinit()
 	m_IsWhitesTurn = true;
 
     // Save initial state
-    m_GameStateList.AddGameState(GameState(m_IsWhitesTurn, &m_Board));
+    m_GameStateList.AddGameState(GameState(&m_Board));
 }
 
 bool GameManager::StartGame()
@@ -101,7 +101,7 @@ void GameManager::Update()
     }
 
 	// Save GameState
-	m_GameStateList.AddGameState(GameState(m_IsWhitesTurn, &m_Board));
+	m_GameStateList.AddGameState(GameState(&m_Board));
 
 	if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
 	{
@@ -144,7 +144,7 @@ void GameManager::PrintHelp() const
 	std::cout << "Move command: Start coordinate + End coordinate --> [a-h][1-8][a-h][1-8]" << std::endl;
     std::cout << "/h : Prints this help document." << std::endl;
     std::cout << "/c : Flip a coin to decide who gets White." << std::endl;
-	std::cout << "/tp : Take back the move." << std::endl;
+	std::cout << "/tb : Take back the move." << std::endl;
     std::cout << "/p : Shows previous board state." << std::endl;
     std::cout << "/n : Shows next board state." << std::endl;
     std::cout << "/l : Shows the latest board state." << std::endl;
@@ -232,8 +232,11 @@ bool GameManager::ParseCommand()
     {
 		if (m_InputBuffer[2] == 'b')
         {
+			// Remove latest gamestate.
             m_GameStateList.DeleteGameState();
+			// Reset the board
             m_Board.SetState(m_GameStateList.GetHeadState());
+			// Draw again
 			m_Board.Draw();
         }
 		return true;

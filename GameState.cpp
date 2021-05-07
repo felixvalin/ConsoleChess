@@ -8,8 +8,7 @@ GameState::GameState()
 {
 }
 
-GameState::GameState(bool isWhitesTurn, const Board* board)
-    : m_IsWhitesTurn(isWhitesTurn)
+GameState::GameState(const Board* board)
 {
     for (unsigned int boardIndex = 0; boardIndex < Board::GetBoardSize(); boardIndex++)
     {
