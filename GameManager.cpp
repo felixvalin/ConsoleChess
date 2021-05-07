@@ -42,6 +42,7 @@ void GameManager::Reinit()
 
 	m_IsGameRunning = true;
 	m_IsWhitesTurn = true;
+	m_IsStaleMate = false;
 
     // Save initial state
     m_GameStateList.AddGameState(GameState(&m_Board));
@@ -86,7 +87,15 @@ void GameManager::Update()
                 break;
             }
 
-            std::cout << m_CurrentPlayer->GetPlayerID() << " wins!" << std::endl;
+			if (!m_IsStaleMate)
+			{
+				std::cout << "Checkmate!" << std::endl;
+                std::cout << m_CurrentPlayer->GetPlayerID() << " wins!" << std::endl;
+			}
+			else
+			{
+				std::cout << "Stalemate!" << std::endl;
+			}
             std::cout << std::endl;
             std::cout << "Game Over! You can review the game using the following commands:" << std::endl;
             std::cout << "/p : Go to previous move." << std::endl;

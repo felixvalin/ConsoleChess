@@ -27,6 +27,8 @@ private:
 
     GameStateList m_GameStateList;
 
+	bool m_IsStaleMate = false;
+
 	bool m_IsGameRunning = true;
 
 	bool m_RestartGame = false;
@@ -45,6 +47,8 @@ public:
 	bool ParseMove(Move* moveToParse);
 	bool ParseCommand();
 	inline void ChangeTurn() { m_IsWhitesTurn = !m_IsWhitesTurn; }
+
+	inline void IsAStalemate(bool value) { m_IsStaleMate = value; }
 
 	inline void GameOver() { m_IsGameRunning = false; }
 };

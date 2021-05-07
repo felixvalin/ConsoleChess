@@ -61,25 +61,25 @@ void Player::SetupBoard()
 	int pawnRow = m_IsWhitePlayer ? 6 : 1;
 	int piecesRow = m_IsWhitePlayer ? 7 : 0;
 
-	// Pawns
-	for (unsigned int i = 0; i < Board::GetBoardWidth(); i++)
-	{
-		AddPiece(PieceType::Piece_Pawn, Point(i, pawnRow));
-	}
+	//// Pawns
+	//for (unsigned int i = 0; i < Board::GetBoardWidth(); i++)
+	//{
+	//	AddPiece(PieceType::Piece_Pawn, Point(i, pawnRow));
+	//}
 
-	// Pieces
-	AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
-	AddPiece(PieceType::Piece_Rook, Point(7, piecesRow));
+	//// Pieces
+	//AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
+	//AddPiece(PieceType::Piece_Rook, Point(7, piecesRow));
 
-	AddPiece(PieceType::Piece_Knight, Point(1, piecesRow));
-	AddPiece(PieceType::Piece_Knight, Point(6, piecesRow));
+	//AddPiece(PieceType::Piece_Knight, Point(1, piecesRow));
+	//AddPiece(PieceType::Piece_Knight, Point(6, piecesRow));
 
 
-	AddPiece(PieceType::Piece_Bishop, Point(2, piecesRow));
-	AddPiece(PieceType::Piece_Bishop, Point(5, piecesRow));
+	//AddPiece(PieceType::Piece_Bishop, Point(2, piecesRow));
+	//AddPiece(PieceType::Piece_Bishop, Point(5, piecesRow));
 
-	AddPiece(PieceType::Piece_Queen, Point(3, piecesRow));
-	AddPiece(PieceType::Piece_King, Point(4, piecesRow));
+	//AddPiece(PieceType::Piece_Queen, Point(3, piecesRow));
+	//AddPiece(PieceType::Piece_King, Point(4, piecesRow));
 
 	//Pawn promotion testing
 	//if (IsWhitePlayer())
@@ -103,6 +103,17 @@ void Player::SetupBoard()
 	//{
 	//	AddPiece(PieceType::Piece_King, Point(0, 0));
 	//}
+
+	// Stalemate in 1
+    if (IsWhitePlayer())
+    {
+    	AddPiece(PieceType::Piece_Queen, Point(1, 3));
+    }
+
+    if (!IsWhitePlayer())
+    {
+    	AddPiece(PieceType::Piece_King, Point(0, 0));
+    }
 }
 
 void Player::PreTurnSetup()
@@ -145,9 +156,6 @@ bool Player::MovePiece(Piece* piece, Point position)
 		// Allows to check if king is checked
 		SetAllAttackedCells();
 
-		///////////////////////////////////////////
-		// Checks nb of attackers, but they all dead --> still in check
-		///////////////////////////////////////////
 		if (IsKingChecked())
 		{
 			std::cout << "Illegal Move Error: The king is in check after this move." << std::endl;
@@ -264,13 +272,10 @@ bool Player::IsKingChecked() const
 
 bool Player::IsKingCheckMated()
 {
+	int totalPossibleMoves = 0;
+
 	// THIS was a big issue (newly added). The attacked cells were not for the right player. 
 	SetAllAttackedCells();
-
-	if (!IsKingChecked())
-	{
-		return false;
-	}
 
 	GameState originalState(m_Board);
 
@@ -289,13 +294,17 @@ bool Player::IsKingCheckMated()
 
                 BoardCell* moveTo = m_Board->GetBoardCell(pieceMoves[moveIndex]);
                 piece->Move(moveTo);
+
                 SetAllAttackedCells();
+
 				if (DEBUG)
 					m_Board->Draw(CLEARBUFFER);
 
                 if (!IsKingChecked())
                 {
 					m_Board->SetState(originalState);
+                    SetAllAttackedCells();
+                    totalPossibleMoves++;
 
 					if (DEBUG)
 					{
@@ -303,7 +312,6 @@ bool Player::IsKingCheckMated()
                         std::cout << "This move is legal!: " << piece->GetPieceID() << " " << moveTo->GetPosition().x << " " << moveTo->GetPosition().y << std::endl;
 					}
 
-					SetAllAttackedCells();
                     return false;
                 }
 
@@ -313,7 +321,10 @@ bool Player::IsKingCheckMated()
         }
 	}
 
-	std::cout << "Checkmate!" << std::endl;
+	if (totalPossibleMoves == 0)
+	{
+        m_Manager->IsAStalemate(true);
+	}
 
 	return true;
 }
