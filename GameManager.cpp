@@ -27,6 +27,11 @@ void GameManager::Init()
 	m_WhitePlayer.Init(&m_Board, &m_BlackPlayer, this, true);
 	m_BlackPlayer.Init(&m_Board, &m_WhitePlayer, this, false);
 
+    FlagsFlags.IsStaleMate = false;
+    FlagsFlags.IsWhitesTurn = true;
+    FlagsFlags.IsGameRunning = true;
+    FlagsFlags.RestartGame = false;
+
 	// Save initial state
 	m_GameStateList.AddGameState(GameState(&m_Board));
 }
@@ -40,9 +45,10 @@ void GameManager::Reinit()
 
 	m_GameStateList.Reinit();
 
-	m_IsGameRunning = true;
-	m_IsWhitesTurn = true;
-	m_IsStaleMate = false;
+    FlagsFlags.IsStaleMate = false;
+    FlagsFlags.IsWhitesTurn = true;
+    FlagsFlags.IsGameRunning = true;
+    FlagsFlags.RestartGame = false;
 
     // Save initial state
     m_GameStateList.AddGameState(GameState(&m_Board));
@@ -50,17 +56,17 @@ void GameManager::Reinit()
 
 bool GameManager::StartGame()
 {
-	while (m_IsGameRunning)
+	while (FlagsFlags.IsGameRunning)
 	{
 		Update();
 	}
 
-	return m_RestartGame;
+	return FlagsFlags.RestartGame;
 }
 
 void GameManager::Update()
 {
-	m_IsWhitesTurn ? m_CurrentPlayer = &m_WhitePlayer : m_CurrentPlayer = &m_BlackPlayer;
+	FlagsFlags.IsWhitesTurn ? m_CurrentPlayer = &m_WhitePlayer : m_CurrentPlayer = &m_BlackPlayer;
 	m_CurrentPlayer->PreTurnSetup();
 
 	m_Board.Draw(CLEARBUFFER);
@@ -68,7 +74,7 @@ void GameManager::Update()
     if (!m_CurrentPlayer->GetOpponent()->IsKingCheckMated())
     {
         do {
-            if (!m_IsGameRunning)
+            if (!FlagsFlags.IsGameRunning)
             {
                 break;
             }
@@ -82,12 +88,12 @@ void GameManager::Update()
     else
     {
         do {
-            if (!m_IsGameRunning)
+            if (!FlagsFlags.IsGameRunning)
             {
                 break;
             }
 
-			if (!m_IsStaleMate)
+			if (!FlagsFlags.IsStaleMate)
 			{
 				std::cout << "Checkmate!" << std::endl;
                 std::cout << m_CurrentPlayer->GetPlayerID() << " wins!" << std::endl;
@@ -228,8 +234,8 @@ bool GameManager::ParseCommand()
 	}
 	case 'q': // quit
 	{
-		m_IsGameRunning = false;
-		m_RestartGame = false;
+		FlagsFlags.IsGameRunning = false;
+		FlagsFlags.RestartGame = false;
 		break;
 	}
     case 'c': // coin
@@ -257,8 +263,8 @@ bool GameManager::ParseCommand()
     }
     case 'r': // reset
     {
-        m_RestartGame = true;
-		m_IsGameRunning = false;
+		FlagsFlags.RestartGame = true;
+		FlagsFlags.IsGameRunning = false;
         break;
     }
 	return true;

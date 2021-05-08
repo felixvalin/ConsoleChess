@@ -29,7 +29,6 @@ Player::~Player()
     }
 }
 
-
 void Player::Init(Board* board, Player* opponent, GameManager* manager, bool isWhitePlayer)
 {
 	isWhitePlayer ? m_PlayerID = "White" : m_PlayerID = "Black";
@@ -61,25 +60,25 @@ void Player::SetupBoard()
 	int pawnRow = m_IsWhitePlayer ? 6 : 1;
 	int piecesRow = m_IsWhitePlayer ? 7 : 0;
 
-	//// Pawns
-	//for (unsigned int i = 0; i < Board::GetBoardWidth(); i++)
-	//{
-	//	AddPiece(PieceType::Piece_Pawn, Point(i, pawnRow));
-	//}
+	// Pawns
+	for (unsigned int i = 0; i < Board::GetBoardWidth(); i++)
+	{
+		AddPiece(PieceType::Piece_Pawn, Point(i, pawnRow));
+	}
 
-	//// Pieces
-	//AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
-	//AddPiece(PieceType::Piece_Rook, Point(7, piecesRow));
+	// Pieces
+	AddPiece(PieceType::Piece_Rook, Point(0, piecesRow));
+	AddPiece(PieceType::Piece_Rook, Point(7, piecesRow));
 
-	//AddPiece(PieceType::Piece_Knight, Point(1, piecesRow));
-	//AddPiece(PieceType::Piece_Knight, Point(6, piecesRow));
+	AddPiece(PieceType::Piece_Knight, Point(1, piecesRow));
+	AddPiece(PieceType::Piece_Knight, Point(6, piecesRow));
 
 
-	//AddPiece(PieceType::Piece_Bishop, Point(2, piecesRow));
-	//AddPiece(PieceType::Piece_Bishop, Point(5, piecesRow));
+	AddPiece(PieceType::Piece_Bishop, Point(2, piecesRow));
+	AddPiece(PieceType::Piece_Bishop, Point(5, piecesRow));
 
-	//AddPiece(PieceType::Piece_Queen, Point(3, piecesRow));
-	//AddPiece(PieceType::Piece_King, Point(4, piecesRow));
+	AddPiece(PieceType::Piece_Queen, Point(3, piecesRow));
+	AddPiece(PieceType::Piece_King, Point(4, piecesRow));
 
 	//Pawn promotion testing
 	//if (IsWhitePlayer())
@@ -105,15 +104,15 @@ void Player::SetupBoard()
 	//}
 
 	// Stalemate in 1
-    if (IsWhitePlayer())
-    {
-    	AddPiece(PieceType::Piece_Queen, Point(1, 3));
-    }
+    //if (IsWhitePlayer())
+    //{
+    //	AddPiece(PieceType::Piece_Queen, Point(1, 3));
+    //}
 
-    if (!IsWhitePlayer())
-    {
-    	AddPiece(PieceType::Piece_King, Point(0, 0));
-    }
+    //if (!IsWhitePlayer())
+    //{
+    //	AddPiece(PieceType::Piece_King, Point(0, 0));
+    //}
 }
 
 void Player::PreTurnSetup()

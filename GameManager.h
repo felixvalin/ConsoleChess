@@ -19,19 +19,23 @@ private:
 	Player m_BlackPlayer;
 	Player* m_CurrentPlayer;
 
-	bool m_IsWhitesTurn = true;
-
 	char* m_InputBuffer;
 
 	Move m_CurrentMove;
 
     GameStateList m_GameStateList;
 
-	bool m_IsStaleMate = false;
-
-	bool m_IsGameRunning = true;
-
-	bool m_RestartGame = false;
+	union
+	{
+		struct 
+		{
+            uint8_t IsStaleMate:1;
+            uint8_t IsWhitesTurn:1;
+            uint8_t IsGameRunning:1;
+			uint8_t RestartGame:1;
+		} FlagsFlags;
+		uint8_t m_Flags;
+	};
 
 public:
 	GameManager();
@@ -46,10 +50,10 @@ public:
 
 	bool ParseMove(Move* moveToParse);
 	bool ParseCommand();
-	inline void ChangeTurn() { m_IsWhitesTurn = !m_IsWhitesTurn; }
+	inline void ChangeTurn() { FlagsFlags.IsWhitesTurn = !FlagsFlags.IsWhitesTurn; }
 
-	inline void IsAStalemate(bool value) { m_IsStaleMate = value; }
+	inline void IsAStalemate(bool value) { FlagsFlags.IsStaleMate = value; }
 
-	inline void GameOver() { m_IsGameRunning = false; }
+	inline void GameOver() { FlagsFlags.IsGameRunning = false; }
 };
 
